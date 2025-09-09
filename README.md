@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+UrbanMart (Next.js + DummyJSON)
+===============================
 
-## Getting Started
+Project Structure
+-----------------
+The codebase is refactored for clarity and scalability:
+- Main source code is under `src/` (components, hooks, layouts, lib, pages, store, styles, types)
+- Next.js routing and entry points are under `app/` (including `/cart`, `/products/[id]`, error/loading/layout files)
+- Shared UI components exist in both `components/` and `src/components/` for migration compatibility
+- Redux store and slices are in `store/` and `src/store/`
+- Type definitions are in `types/` and `src/types/`
+- Static assets are in `public/`
 
-First, run the development server:
+Refactoring Notes
+-----------------
+- All business logic, UI, and Redux code moved to `src/` for maintainability
+- Next.js 13+ app directory structure (`app/`) is used for routing and layouts
+- Legacy files may exist in root folders for compatibility
+
+How to run locally
+
+1. Install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Yarn is used for dependency management. If you don't have Yarn installed, run:
+
+```bash
+npm install --global yarn
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then install dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+yarn
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Start the dev server:
 
-## Learn More
+```bash
+yarn dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+3. Open http://localhost:3000.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Features
+--------
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Home lists products from https://dummyjson.com/products.
+- Product details at /products/[id] with add-to-cart.
+- Cart at /cart with remove and totals.
+- Cart persists via localStorage using Redux Toolkit store subscription.
+- Header shows navigation and live cart count.
 
-## Deploy on Vercel
+Trade-offs and notes
+--------------------
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Tailwind CSS for styling with simple utility classes.
+- Next Image configured for i.dummyjson.com.
+- State managed with Redux Toolkit; minimal slice and localStorage persistence.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Known limitations
+-----------------
+
+- No search/pagination.
+- Adds quantity in steps of 1.
+- No SSR caching; fetches are uncached.
