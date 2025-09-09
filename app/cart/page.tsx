@@ -2,25 +2,11 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect } from 'react'
-import { type CartItem, useCartStore } from '@/store/cartStore'
+import { type CartItem } from '@/store/cartStore'
+import { useCart } from '@/hooks/useCartHydration'
 
 export default function CartPage() {
-  const items = useCartStore((state) => state.items)
-  const isHydrated = useCartStore((state) => state.isHydrated)
-  const isEmpty = useCartStore((state) => state.isEmpty)
-  const getCartSummary = useCartStore((state) => state.getCartSummary)
-  const removeItem = useCartStore((state) => state.removeItem)
-  const updateQuantity = useCartStore((state) => state.updateQuantity)
-  const clearCart = useCartStore((state) => state.clearCart)
-  const setHydrated = useCartStore((state) => state.setHydrated)
-
-  // Ensure hydration happens on client side
-  useEffect(() => {
-    if (!isHydrated) {
-      setHydrated(true)
-    }
-  }, [isHydrated, setHydrated])
+  const { items, isEmpty, getCartSummary, removeItem, updateQuantity, clearCart } = useCart()
 
 
   const cartSummary = getCartSummary()
@@ -28,12 +14,7 @@ export default function CartPage() {
   return (
     <div className="grid gap-4">
       <h2 className="m-0 text-2xl font-semibold">Your Cart</h2>
-      {!isHydrated ? (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">⏳</div>
-          <h3 className="text-xl font-semibold text-gray-800 mb-2">Loading cart...</h3>
-        </div>
-      ) : isEmpty ? (
+      {isEmpty ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">🛒</div>
           <h3 className="text-xl font-semibold text-gray-800 mb-2">Your cart is empty</h3>

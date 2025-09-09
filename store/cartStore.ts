@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist, subscribeWithSelector } from 'zustand/middleware'
+import { persist, subscribeWithSelector, createJSONStorage } from 'zustand/middleware'
 
 export interface CartItem {
   id: number
@@ -19,14 +19,12 @@ export interface CartSummary {
 
 interface CartState {
   items: CartItem[]
-  isHydrated: boolean
 
   // Actions
   addItem: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void
   removeItem: (id: number) => void
   updateQuantity: (id: number, quantity: number) => void
   clearCart: () => void
-  setHydrated: (hydrated: boolean) => void
 
   // Selectors
   getTotalItems: () => number
@@ -40,42 +38,11 @@ interface CartState {
   itemCount: number
 }
 
-// Server snapshot for SSR - cached to avoid infinite loops
-let serverSnapshot: CartState | null = null
-
-const getServerSnapshot = (): CartState => {
-  if (!serverSnapshot) {
-    serverSnapshot = {
-      items: [],
-      isHydrated: false,
-      addItem: () => {},
-      removeItem: () => {},
-      updateQuantity: () => {},
-      clearCart: () => {},
-      setHydrated: () => {},
-      getTotalItems: () => 0,
-      getTotalPrice: () => 0,
-      getCartSummary: () => ({
-        totalItems: 0,
-        totalPrice: 0,
-        totalDiscount: 0,
-        subtotal: 0,
-      }),
-      getItemById: () => undefined,
-      isItemInCart: () => false,
-      isEmpty: true,
-      itemCount: 0,
-    }
-  }
-  return serverSnapshot
-}
-
 export const useCartStore = create<CartState>()(
   subscribeWithSelector(
     persist(
       (set, get) => ({
         items: [],
-        isHydrated: false,
 
         addItem: (item) => {
           set((state) => {
@@ -139,10 +106,6 @@ export const useCartStore = create<CartState>()(
           set({ items: [], itemCount: 0, isEmpty: true })
         },
 
-        setHydrated: (hydrated: boolean) => {
-          set({ isHydrated: hydrated })
-        },
-
         getTotalItems: () => {
           return get().items.reduce((sum, item) => sum + item.quantity, 0)
         },
@@ -172,21 +135,21 @@ export const useCartStore = create<CartState>()(
           return get().items.some((item) => item.id === id)
         },
 
+        // Initialize computed values
         isEmpty: true,
-
         itemCount: 0,
       }),
       {
         name: 'urbanmart-cart',
         partialize: (state) => ({
           items: state.items,
-          isHydrated: false, // Always start as not hydrated
         }),
+        storage: createJSONStorage(() => sessionStorage),
         onRehydrateStorage: () => (state) => {
           if (state) {
             const itemCount = state.items.reduce((sum, item) => sum + item.quantity, 0)
             const isEmpty = state.items.length === 0
-            state.setHydrated(true)
+            // Update state properties directly
             state.itemCount = itemCount
             state.isEmpty = isEmpty
           }
@@ -195,6 +158,3 @@ export const useCartStore = create<CartState>()(
     )
   )
 )
-
-// Export server snapshot for SSR
-export { getServerSnapshot }

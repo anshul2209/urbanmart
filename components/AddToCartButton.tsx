@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useTransition, useEffect } from 'react'
+import { useState, useTransition } from 'react'
 import { logError } from '@/lib/errors'
-import { useCartStore } from '@/store/cartStore'
+import { useCart } from '@/hooks/useCartHydration'
 
 type Props = {
   id: number
@@ -26,17 +26,11 @@ export default function AddToCartButton({
   const [state, setState] = useState<ButtonState>('idle')
   const [isPending, startTransition] = useTransition()
 
-  const addItem = useCartStore((state) => state.addItem)
-  const isItemInCart = useCartStore((state) => state.isItemInCart(id))
-  const isHydrated = useCartStore((state) => state.isHydrated)
-  const setHydrated = useCartStore((state) => state.setHydrated)
-
-  // Ensure hydration happens on client side
-  useEffect(() => {
-    if (!isHydrated) {
-      setHydrated(true)
-    }
-  }, [isHydrated, setHydrated])
+  // Single hook that handles everything
+  const { addItem, isItemInCart } = useCart()
+  
+  // Check if item is in cart
+  const itemInCart = isItemInCart(id)
 
   const handleAddToCart = async () => {
     setState('adding')
@@ -79,7 +73,7 @@ export default function AddToCartButton({
       case 'error':
         return 'Try Again'
       default:
-        return isItemInCart ? 'In Cart' : 'Add to Cart'
+        return itemInCart ? 'In Cart' : 'Add to Cart'
     }
   }
 
@@ -94,7 +88,7 @@ export default function AddToCartButton({
       case 'error':
         return `${baseStyles} bg-red-500 hover:bg-red-600`
       default:
-        return isItemInCart ? `${baseStyles} bg-gray-500 hover:bg-gray-600` : baseStyles
+        return itemInCart ? `${baseStyles} bg-gray-500 hover:bg-gray-600` : baseStyles
     }
   }
 
