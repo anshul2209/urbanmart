@@ -11,10 +11,11 @@ interface ProductsResponse {
 
 export async function fetchProducts(
   limit: number = 24,
+  skip: number = 0,
   revalidate: number = 60
-): Promise<Product[]> {
+): Promise<ProductsResponse> {
   try {
-    const response = await fetch(`${API_BASE}/products?limit=${limit}`, {
+    const response = await fetch(`${API_BASE}/products?limit=${limit}&skip=${skip}`, {
       next: { revalidate },
       headers: {
         'User-Agent': 'UrbanMart-SSR/1.0',
@@ -25,12 +26,16 @@ export async function fetchProducts(
       throw new Error(`Failed to fetch products: ${response.status} ${response.statusText}`)
     }
 
-    const data: ProductsResponse = await response.json()
-    return data.products
+    return await response.json()
   } catch (error) {
     console.error('Error fetching products:', error)
-    // Return empty array as fallback for SSR
-    return []
+    // Return empty response as fallback for SSR
+    return {
+      products: [],
+      total: 0,
+      skip: 0,
+      limit: 0,
+    }
   }
 }
 

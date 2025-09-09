@@ -5,6 +5,7 @@ A modern e-commerce application built with Next.js 15, TypeScript, and Tailwind 
 ## ✨ Features
 
 - **Product Catalog**: Browse products with responsive grid layout
+- **Infinite Loading**: Products load automatically as you scroll
 - **Shopping Cart**: Add/remove items with session-based persistence
 - **Product Details**: Dynamic product pages with images and ratings
 - **Next.js 15**: App Router with Server-Side Rendering

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
-import ProductCard from '@/components/ProductCard'
+import ProductGrid from '@/components/ProductGrid'
 import { fetchProducts } from '@/lib/api'
+import type { Product } from '@/types/product'
 
 export const metadata: Metadata = {
   title: 'Shop Premium Products Online',
@@ -26,7 +27,18 @@ export const metadata: Metadata = {
 }
 
 export default async function Home() {
-  const products = await fetchProducts()
+  // Fetch initial products for SSR
+  let initialProducts: Product[] = []
+  let totalProducts = 0
+  
+  try {
+    const response = await fetchProducts(12, 0) // Load first 12 products
+    initialProducts = response.products
+    totalProducts = response.total
+  } catch (error) {
+    console.error('Failed to fetch initial products:', error)
+    // Continue with empty products array
+  }
 
   return (
     <>
@@ -40,11 +52,7 @@ export default async function Home() {
 
       <section>
         <h2 className="text-2xl font-semibold text-slate-800 mb-6">Featured Products</h2>
-        <div className="product-grid">
-          {products.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
+        <ProductGrid initialProducts={initialProducts} initialTotal={totalProducts} />
       </section>
     </>
   )
