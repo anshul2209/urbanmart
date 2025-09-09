@@ -22,7 +22,7 @@ A modern e-commerce application built with Next.js 15, TypeScript, and Tailwind 
 ## 🚀 Quick Start
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/anshul2209/urbanmart.git
 cd urbanmart
 yarn install
 yarn dev
