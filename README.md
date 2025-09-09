@@ -27,6 +27,14 @@ A modern, full-stack e-commerce application built with Next.js 15, TypeScript, a
 - **Hydration Safe**: Proper SSR/client hydration handling
 - **Modern UI**: Clean, intuitive interface with smooth animations
 
+## 🌐 Live Demo
+
+**🚀 [View Live Application](https://urbanmart-dun4.onrender.com)**
+
+Your UrbanMart e-commerce platform is now live and ready to use! Browse products, add items to cart, and experience the full shopping functionality.
+
+> **Note**: This is deployed on Render's free tier. The instance may spin down with inactivity, causing initial requests to take 50+ seconds to wake up the server.
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -182,33 +190,30 @@ The project uses a comprehensive Biome configuration with:
 
 ### Free Deployment on Render
 
-This application is configured for easy deployment on Render (free tier available):
+This application is successfully deployed on Render's free tier:
 
-#### 1. **Prepare Your Repository**
-Make sure your code is pushed to a Git repository (GitHub, GitLab, or Bitbucket).
+#### 🌐 **Live Application**
+- **URL**: [https://urbanmart-dun4.onrender.com](https://urbanmart-dun4.onrender.com)
+- **Status**: ✅ Successfully Deployed
+- **Features**: Full e-commerce functionality with product browsing and cart management
 
-#### 2. **Deploy to Render**
-1. Go to [render.com](https://render.com) and sign up/login
-2. Click "New +" → "Web Service"
-3. Connect your Git repository
-4. Render will automatically detect the `render.yaml` configuration
-5. Click "Create Web Service"
+#### ⚠️ **Free Tier Limitations**
+- **Sleep Mode**: Instance spins down after 15 minutes of inactivity
+- **Cold Start**: First request after sleep takes 50+ seconds to wake up
+- **Monthly Hours**: 750 hours/month (sufficient for 24/7 uptime when active)
+- **Performance**: 512MB RAM, shared CPU resources
 
-#### 3. **Environment Variables** (if needed)
-If your app requires environment variables:
-1. Go to your service dashboard
-2. Navigate to "Environment" tab
-3. Add any required variables from `env.example`
+#### 🚀 **Deployment Process**
+1. **Repository Setup**: Code pushed to Git repository
+2. **Render Configuration**: Uses `render.yaml` for automatic setup
+3. **Build Process**: `yarn install && yarn build`
+4. **Start Command**: `yarn start`
+5. **Health Check**: Automatic monitoring
 
-#### 4. **Deployment Details**
-- **Build Command**: `yarn install && yarn build`
-- **Start Command**: `yarn start`
-- **Node Version**: 18+ (automatically detected)
-- **Health Check**: Automatic at root path `/`
-
-#### 5. **Custom Domain** (Optional)
-- Free tier includes: `your-app-name.onrender.com`
-- Custom domains available on paid plans
+#### 💡 **Performance Tips**
+- **Keep Active**: Regular traffic keeps the instance warm
+- **Upgrade Path**: Consider paid plans for production use
+- **Monitoring**: Check Render dashboard for usage statistics
 
 ### Other Deployment Options
 The application is also ready for:
@@ -235,6 +240,23 @@ yarn start
 
 This project is open source and available under the [MIT License](LICENSE).
 
+## 🌐 Live Demo & Deployment
+
+**🚀 [View Live Application](https://urbanmart-dun4.onrender.com)**
+
+UrbanMart e-commerce platform is successfully deployed and running! Experience the full shopping functionality with product browsing, cart management, and responsive design.
+
+### Deployment Details
+- **Platform**: Render (Free Tier)
+- **URL**: [https://urbanmart-dun4.onrender.com](https://urbanmart-dun4.onrender.com)
+- **Status**: ✅ Live and Functional
+- **Features**: Complete e-commerce experience with session-based cart persistence
+
+### Free Tier Considerations
+- **Sleep Mode**: Instance may spin down after inactivity
+- **Cold Start**: Initial requests after sleep may take 50+ seconds
+- **Performance**: Optimized for development and testing
+
 ## 🙏 Acknowledgments
 
 - [Next.js](https://nextjs.org/) - React framework
@@ -242,3 +264,4 @@ This project is open source and available under the [MIT License](LICENSE).
 - [Zustand](https://zustand-demo.pmnd.rs/) - State management
 - [Biome](https://biomejs.dev/) - Linting and formatting
 - [DummyJSON](https://dummyjson.com/) - API for product data
+- [Render](https://render.com/) - Free hosting platform

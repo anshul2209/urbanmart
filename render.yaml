@@ -3,7 +3,7 @@ services:
     name: urbanmart-ecommerce
     env: node
     plan: free
-    buildCommand: yarn install && yarn build
+    buildCommand: yarn install --frozen-lockfile && yarn build
     startCommand: yarn start
     envVars:
       - key: NODE_ENV
