@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
 import { logError } from '@/lib/errors'
 import { useCartStore } from '@/store/cartStore'
 
@@ -29,10 +29,16 @@ export default function AddToCartButton({
   const addItem = useCartStore((state) => state.addItem)
   const isItemInCart = useCartStore((state) => state.isItemInCart(id))
   const isHydrated = useCartStore((state) => state.isHydrated)
+  const setHydrated = useCartStore((state) => state.setHydrated)
+
+  // Ensure hydration happens on client side
+  useEffect(() => {
+    if (!isHydrated) {
+      setHydrated(true)
+    }
+  }, [isHydrated, setHydrated])
 
   const handleAddToCart = async () => {
-    if (!isHydrated) return
-
     setState('adding')
 
     startTransition(() => {
@@ -96,7 +102,7 @@ export default function AddToCartButton({
     <button
       type="button"
       onClick={handleAddToCart}
-      disabled={!isHydrated || isPending || state === 'adding'}
+      disabled={isPending || state === 'adding'}
       className={getButtonStyles()}
       aria-label={`Add ${title} to cart`}
     >

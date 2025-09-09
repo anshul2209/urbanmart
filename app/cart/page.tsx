@@ -2,19 +2,26 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { useEffect } from 'react'
 import { type CartItem, useCartStore } from '@/store/cartStore'
 
 export default function CartPage() {
-  const { items, isHydrated, isEmpty, getCartSummary, removeItem, updateQuantity, clearCart } =
-    useCartStore((state) => ({
-      items: state.items,
-      isHydrated: state.isHydrated,
-      isEmpty: state.isEmpty,
-      getCartSummary: state.getCartSummary,
-      removeItem: state.removeItem,
-      updateQuantity: state.updateQuantity,
-      clearCart: state.clearCart,
-    }))
+  const items = useCartStore((state) => state.items)
+  const isHydrated = useCartStore((state) => state.isHydrated)
+  const isEmpty = useCartStore((state) => state.isEmpty)
+  const getCartSummary = useCartStore((state) => state.getCartSummary)
+  const removeItem = useCartStore((state) => state.removeItem)
+  const updateQuantity = useCartStore((state) => state.updateQuantity)
+  const clearCart = useCartStore((state) => state.clearCart)
+  const setHydrated = useCartStore((state) => state.setHydrated)
+
+  // Ensure hydration happens on client side
+  useEffect(() => {
+    if (!isHydrated) {
+      setHydrated(true)
+    }
+  }, [isHydrated, setHydrated])
+
 
   const cartSummary = getCartSummary()
 

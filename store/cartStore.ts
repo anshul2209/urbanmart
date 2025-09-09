@@ -40,6 +40,36 @@ interface CartState {
   itemCount: number
 }
 
+// Server snapshot for SSR - cached to avoid infinite loops
+let serverSnapshot: CartState | null = null
+
+const getServerSnapshot = (): CartState => {
+  if (!serverSnapshot) {
+    serverSnapshot = {
+      items: [],
+      isHydrated: false,
+      addItem: () => {},
+      removeItem: () => {},
+      updateQuantity: () => {},
+      clearCart: () => {},
+      setHydrated: () => {},
+      getTotalItems: () => 0,
+      getTotalPrice: () => 0,
+      getCartSummary: () => ({
+        totalItems: 0,
+        totalPrice: 0,
+        totalDiscount: 0,
+        subtotal: 0,
+      }),
+      getItemById: () => undefined,
+      isItemInCart: () => false,
+      isEmpty: true,
+      itemCount: 0,
+    }
+  }
+  return serverSnapshot
+}
+
 export const useCartStore = create<CartState>()(
   subscribeWithSelector(
     persist(
@@ -56,55 +86,57 @@ export const useCartStore = create<CartState>()(
               const newQuantity = existingItem.quantity + quantity
               const maxQuantity = existingItem.maxQuantity || item.maxQuantity
 
-              return {
-                items: state.items.map((i) =>
-                  i.id === item.id
-                    ? {
-                        ...i,
-                        quantity: maxQuantity ? Math.min(newQuantity, maxQuantity) : newQuantity,
-                      }
-                    : i
-                ),
-              }
+              const newItems = state.items.map((i) =>
+                i.id === item.id
+                  ? {
+                      ...i,
+                      quantity: maxQuantity ? Math.min(newQuantity, maxQuantity) : newQuantity,
+                    }
+                  : i
+              )
+              const newItemCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
+              return { items: newItems, itemCount: newItemCount, isEmpty: newItems.length === 0 }
             }
 
-            return {
-              items: [...state.items, { ...item, quantity }],
-            }
+            const newItems = [...state.items, { ...item, quantity }]
+            const newItemCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
+            return { items: newItems, itemCount: newItemCount, isEmpty: newItems.length === 0 }
           })
         },
 
         removeItem: (id: number) => {
-          set((state) => ({
-            items: state.items.filter((item) => item.id !== id),
-          }))
+          set((state) => {
+            const newItems = state.items.filter((item) => item.id !== id)
+            const newItemCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
+            return { items: newItems, itemCount: newItemCount, isEmpty: newItems.length === 0 }
+          })
         },
 
         updateQuantity: (id: number, quantity: number) => {
           set((state) => {
             if (quantity <= 0) {
-              return {
-                items: state.items.filter((item) => item.id !== id),
-              }
+              const newItems = state.items.filter((item) => item.id !== id)
+              const newItemCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
+              return { items: newItems, itemCount: newItemCount, isEmpty: newItems.length === 0 }
             }
 
-            return {
-              items: state.items.map((item) => {
-                if (item.id === id) {
-                  const maxQuantity = item.maxQuantity
-                  return {
-                    ...item,
-                    quantity: maxQuantity ? Math.min(quantity, maxQuantity) : quantity,
-                  }
+            const newItems = state.items.map((item) => {
+              if (item.id === id) {
+                const maxQuantity = item.maxQuantity
+                return {
+                  ...item,
+                  quantity: maxQuantity ? Math.min(quantity, maxQuantity) : quantity,
                 }
-                return item
-              }),
-            }
+              }
+              return item
+            })
+            const newItemCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
+            return { items: newItems, itemCount: newItemCount, isEmpty: newItems.length === 0 }
           })
         },
 
         clearCart: () => {
-          set({ items: [] })
+          set({ items: [], itemCount: 0, isEmpty: true })
         },
 
         setHydrated: (hydrated: boolean) => {
@@ -140,13 +172,9 @@ export const useCartStore = create<CartState>()(
           return get().items.some((item) => item.id === id)
         },
 
-        get isEmpty() {
-          return get().items.length === 0
-        },
+        isEmpty: true,
 
-        get itemCount() {
-          return get().getTotalItems()
-        },
+        itemCount: 0,
       }),
       {
         name: 'urbanmart-cart',
@@ -155,9 +183,18 @@ export const useCartStore = create<CartState>()(
           isHydrated: false, // Always start as not hydrated
         }),
         onRehydrateStorage: () => (state) => {
-          state?.setHydrated(true)
+          if (state) {
+            const itemCount = state.items.reduce((sum, item) => sum + item.quantity, 0)
+            const isEmpty = state.items.length === 0
+            state.setHydrated(true)
+            state.itemCount = itemCount
+            state.isEmpty = isEmpty
+          }
         },
       }
     )
   )
 )
+
+// Export server snapshot for SSR
+export { getServerSnapshot }

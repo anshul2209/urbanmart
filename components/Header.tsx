@@ -2,12 +2,20 @@
 
 import Link from 'next/link'
 import { useCartStore } from '@/store/cartStore'
+import { useEffect } from 'react'
 
 export default function Header() {
-  const { itemCount, isHydrated } = useCartStore((state) => ({
-    itemCount: state.itemCount,
-    isHydrated: state.isHydrated,
-  }))
+  const itemCount = useCartStore((state) => state.itemCount)
+  const isHydrated = useCartStore((state) => state.isHydrated)
+  const setHydrated = useCartStore((state) => state.setHydrated)
+
+  // Ensure hydration happens on client side
+  useEffect(() => {
+    if (!isHydrated) {
+      setHydrated(true)
+    }
+  }, [isHydrated, setHydrated])
+
 
   return (
     <header className="bg-slate-800 text-white shadow-lg rounded-xl mb-6 flex flex-col sm:flex-row items-center justify-between px-6 py-4">
