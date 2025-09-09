@@ -122,17 +122,13 @@ export const useCartStore = create<CartState>()(
         getCartSummary: () => {
           const items = get().items
           const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
-          const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-          const totalDiscount = items.reduce((sum, item) => {
-            const discount = (item.price * (item.discountPercentage || 0)) / 100
-            return sum + discount * item.quantity
-          }, 0)
+          const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
           return {
             totalItems,
-            totalPrice: subtotal - totalDiscount,
-            totalDiscount,
-            subtotal,
+            totalPrice,
+            totalDiscount: 0, // No discount calculation in cart
+            subtotal: totalPrice,
           }
         },
 
