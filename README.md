@@ -180,11 +180,42 @@ The project uses a comprehensive Biome configuration with:
 
 ## 🚀 Deployment
 
-The application is ready for deployment on platforms like:
-- Vercel (recommended)
-- Netlify
-- AWS Amplify
-- Any Node.js hosting platform
+### Free Deployment on Render
+
+This application is configured for easy deployment on Render (free tier available):
+
+#### 1. **Prepare Your Repository**
+Make sure your code is pushed to a Git repository (GitHub, GitLab, or Bitbucket).
+
+#### 2. **Deploy to Render**
+1. Go to [render.com](https://render.com) and sign up/login
+2. Click "New +" → "Web Service"
+3. Connect your Git repository
+4. Render will automatically detect the `render.yaml` configuration
+5. Click "Create Web Service"
+
+#### 3. **Environment Variables** (if needed)
+If your app requires environment variables:
+1. Go to your service dashboard
+2. Navigate to "Environment" tab
+3. Add any required variables from `env.example`
+
+#### 4. **Deployment Details**
+- **Build Command**: `yarn install && yarn build`
+- **Start Command**: `yarn start`
+- **Node Version**: 18+ (automatically detected)
+- **Health Check**: Automatic at root path `/`
+
+#### 5. **Custom Domain** (Optional)
+- Free tier includes: `your-app-name.onrender.com`
+- Custom domains available on paid plans
+
+### Other Deployment Options
+The application is also ready for:
+- **Vercel** (recommended for Next.js)
+- **Netlify**
+- **AWS Amplify**
+- **Any Node.js hosting platform**
 
 ### Build for Production
 ```bash
