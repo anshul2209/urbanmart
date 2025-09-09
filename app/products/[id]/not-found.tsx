@@ -1,11 +1,11 @@
-import Link from "next/link";
-import type { Metadata } from "next";
+import type { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: "Product Not Found | UrbanMart",
+  title: 'Product Not Found | UrbanMart',
   description: "The product you're looking for doesn't exist. Browse our other amazing products.",
   robots: { index: false, follow: false },
-};
+}
 
 export default function NotFound() {
   return (
@@ -23,5 +23,5 @@ export default function NotFound() {
         </Link>
       </div>
     </div>
-  );
+  )
 }
