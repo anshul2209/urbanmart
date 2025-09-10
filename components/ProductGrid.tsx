@@ -1,9 +1,8 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import ProductCard from './ProductCard'
 import { useInfiniteProducts } from '@/hooks/useInfiniteProducts'
-import { useIntersectionObserver } from '@/hooks/useIntersectionObserver'
 import type { Product } from '@/types/product'
 
 interface ProductGridProps {
@@ -16,16 +15,9 @@ export default function ProductGrid({ initialProducts = [], initialTotal = 0 }: 
     initialProducts,
     initialTotal
   })
-  const { ref, isIntersecting } = useIntersectionObserver()
+  const ref = useRef<HTMLDivElement>(null)
 
-  // Load more products when intersection observer triggers
-  useEffect(() => {
-    if (isIntersecting && hasMore && !loading) {
-      loadMore()
-    }
-  }, [isIntersecting, hasMore, loading, loadMore])
-
-  // Direct intersection observer setup as backup
+  // Intersection observer for infinite scroll
   useEffect(() => {
     const element = ref.current
     if (!element || !hasMore || loading) return

@@ -49,6 +49,9 @@ export async function fetchProduct(id: string, revalidate: number = 300): Promis
     })
 
     if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error(`Product ${id} not found`)
+      }
       throw new Error(`Failed to fetch product ${id}: ${response.status} ${response.statusText}`)
     }
 

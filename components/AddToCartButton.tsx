@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { logError } from '@/lib/errors'
-import { useCart } from '@/hooks/useCartHydration'
+import { useCartStore } from '@/store/cartStore'
 
 type Props = {
   id: number
@@ -27,7 +27,7 @@ export default function AddToCartButton({
   const [isPending, startTransition] = useTransition()
 
   // Single hook that handles everything
-  const { addItem, isItemInCart } = useCart()
+  const { addItem, isItemInCart } = useCartStore()
   
   // Check if item is in cart
   const itemInCart = isItemInCart(id)

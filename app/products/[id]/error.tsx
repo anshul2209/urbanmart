@@ -1,5 +1,14 @@
 'use client'
 
+import ErrorPage from '@/components/ErrorPage'
+
 export default function ProductError({ error }: { error: unknown }) {
-  return <div className="py-10 text-red-600">Failed to load product.</div>
+  return (
+    <ErrorPage 
+      error={error as Error} 
+      title="Failed to load product"
+      description="We couldn't load the product details. Please try again."
+      showDetails={false}
+    />
+  )
 }

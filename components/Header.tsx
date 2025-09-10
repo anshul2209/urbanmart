@@ -1,10 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { useCart } from '@/hooks/useCartHydration'
+import { useCartStore } from '@/store/cartStore'
 
 export default function Header() {
-  const { itemCount } = useCart()
+  const { itemCount } = useCartStore()
 
 
   return (

@@ -1,4 +1,4 @@
-import { ProductCardSkeleton } from '@/components/ProductCardSkeleton'
+import { ProductCardSkeleton } from '@/components/LoadingSpinner'
 
 const SKELETON_IDS = Array.from({ length: 8 }, (_, i) => `skeleton-${i}`)
 

@@ -3,10 +3,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { type CartItem } from '@/store/cartStore'
-import { useCart } from '@/hooks/useCartHydration'
+import { useCartStore } from '@/store/cartStore'
 
 export default function CartPage() {
-  const { items, isEmpty, getCartSummary, removeItem, updateQuantity, clearCart } = useCart()
+  const { items, isEmpty, getCartSummary, removeItem, updateQuantity, clearCart } = useCartStore()
 
 
   const cartSummary = getCartSummary()

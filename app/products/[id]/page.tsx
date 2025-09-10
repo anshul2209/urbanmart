@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import AddToCartButton from '@/components/AddToCartButton'
 import { BreadcrumbJsonLd } from '@/components/BreadcrumbJsonLd'
 import { ProductJsonLd } from '@/components/ProductJsonLd'
@@ -12,19 +13,9 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   let product: Product
   try {
     product = await fetchProduct(id)
-  } catch {
-    // If product doesn't exist, return 404
-    return (
-      <div className="text-center py-12">
-        <h1 className="text-2xl font-bold text-slate-800 mb-4">Product Not Found</h1>
-        <p className="text-slate-600 mb-6">
-          The product you&apos;re looking for doesn&apos;t exist.
-        </p>
-        <Link href="/" className="btn-accent">
-          Back to Home
-        </Link>
-      </div>
-    )
+  } catch (error) {
+    // If product doesn't exist, trigger Next.js 404 page
+    notFound()
   }
 
   const mainImage = product.images?.[0] ?? product.thumbnail

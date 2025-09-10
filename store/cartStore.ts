@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist, subscribeWithSelector, createJSONStorage } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
 
 export interface CartItem {
   id: number
@@ -27,10 +27,7 @@ interface CartState {
   clearCart: () => void
 
   // Selectors
-  getTotalItems: () => number
-  getTotalPrice: () => number
   getCartSummary: () => CartSummary
-  getItemById: (id: number) => CartItem | undefined
   isItemInCart: (id: number) => boolean
 
   // Computed values
@@ -39,122 +36,108 @@ interface CartState {
 }
 
 export const useCartStore = create<CartState>()(
-  subscribeWithSelector(
-    persist(
-      (set, get) => ({
-        items: [],
+  persist(
+    (set, get) => ({
+      items: [],
 
-        addItem: (item) => {
-          set((state) => {
-            const existingItem = state.items.find((i) => i.id === item.id)
-            const quantity = item.quantity || 1
+      addItem: (item) => {
+        set((state) => {
+          const existingItem = state.items.find((i) => i.id === item.id)
+          const quantity = item.quantity || 1
 
-            if (existingItem) {
-              const newQuantity = existingItem.quantity + quantity
-              const maxQuantity = existingItem.maxQuantity || item.maxQuantity
+          if (existingItem) {
+            const newQuantity = existingItem.quantity + quantity
+            const maxQuantity = existingItem.maxQuantity || item.maxQuantity
 
-              const newItems = state.items.map((i) =>
-                i.id === item.id
-                  ? {
-                      ...i,
-                      quantity: maxQuantity ? Math.min(newQuantity, maxQuantity) : newQuantity,
-                    }
-                  : i
-              )
-              const newItemCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
-              return { items: newItems, itemCount: newItemCount, isEmpty: newItems.length === 0 }
-            }
-
-            const newItems = [...state.items, { ...item, quantity }]
+            const newItems = state.items.map((i) =>
+              i.id === item.id
+                ? {
+                    ...i,
+                    quantity: maxQuantity ? Math.min(newQuantity, maxQuantity) : newQuantity,
+                  }
+                : i
+            )
             const newItemCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
             return { items: newItems, itemCount: newItemCount, isEmpty: newItems.length === 0 }
-          })
-        },
+          }
 
-        removeItem: (id: number) => {
-          set((state) => {
+          const newItems = [...state.items, { ...item, quantity }]
+          const newItemCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
+          return { items: newItems, itemCount: newItemCount, isEmpty: newItems.length === 0 }
+        })
+      },
+
+      removeItem: (id: number) => {
+        set((state) => {
+          const newItems = state.items.filter((item) => item.id !== id)
+          const newItemCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
+          return { items: newItems, itemCount: newItemCount, isEmpty: newItems.length === 0 }
+        })
+      },
+
+      updateQuantity: (id: number, quantity: number) => {
+        set((state) => {
+          if (quantity <= 0) {
             const newItems = state.items.filter((item) => item.id !== id)
             const newItemCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
             return { items: newItems, itemCount: newItemCount, isEmpty: newItems.length === 0 }
-          })
-        },
+          }
 
-        updateQuantity: (id: number, quantity: number) => {
-          set((state) => {
-            if (quantity <= 0) {
-              const newItems = state.items.filter((item) => item.id !== id)
-              const newItemCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
-              return { items: newItems, itemCount: newItemCount, isEmpty: newItems.length === 0 }
-            }
-
-            const newItems = state.items.map((item) => {
-              if (item.id === id) {
-                const maxQuantity = item.maxQuantity
-                return {
-                  ...item,
-                  quantity: maxQuantity ? Math.min(quantity, maxQuantity) : quantity,
-                }
+          const newItems = state.items.map((item) => {
+            if (item.id === id) {
+              const maxQuantity = item.maxQuantity
+              return {
+                ...item,
+                quantity: maxQuantity ? Math.min(quantity, maxQuantity) : quantity,
               }
-              return item
-            })
-            const newItemCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
-            return { items: newItems, itemCount: newItemCount, isEmpty: newItems.length === 0 }
+            }
+            return item
           })
-        },
+          const newItemCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
+          return { items: newItems, itemCount: newItemCount, isEmpty: newItems.length === 0 }
+        })
+      },
 
-        clearCart: () => {
-          set({ items: [], itemCount: 0, isEmpty: true })
-        },
+      clearCart: () => {
+        set({ items: [], itemCount: 0, isEmpty: true })
+      },
 
-        getTotalItems: () => {
-          return get().items.reduce((sum, item) => sum + item.quantity, 0)
-        },
+      getCartSummary: () => {
+        const items = get().items
+        const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
+        const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
-        getTotalPrice: () => {
-          return get().items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-        },
+        return {
+          totalItems,
+          totalPrice,
+          totalDiscount: 0, // No discount calculation in cart
+          subtotal: totalPrice,
+        }
+      },
 
-        getCartSummary: () => {
-          const items = get().items
-          const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
-          const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+      isItemInCart: (id: number) => {
+        return get().items.some((item) => item.id === id)
+      },
 
-          return {
-            totalItems,
-            totalPrice,
-            totalDiscount: 0, // No discount calculation in cart
-            subtotal: totalPrice,
-          }
-        },
-
-        getItemById: (id: number) => {
-          return get().items.find((item) => item.id === id)
-        },
-
-        isItemInCart: (id: number) => {
-          return get().items.some((item) => item.id === id)
-        },
-
-        // Initialize computed values
-        isEmpty: true,
-        itemCount: 0,
+      // Initialize computed values
+      isEmpty: true,
+      itemCount: 0,
+    }),
+    {
+      name: 'urbanmart-cart',
+      partialize: (state) => ({
+        items: state.items,
       }),
-      {
-        name: 'urbanmart-cart',
-        partialize: (state) => ({
-          items: state.items,
-        }),
-        storage: createJSONStorage(() => sessionStorage),
-        onRehydrateStorage: () => (state) => {
-          if (state) {
-            const itemCount = state.items.reduce((sum, item) => sum + item.quantity, 0)
-            const isEmpty = state.items.length === 0
-            // Update state properties directly
-            state.itemCount = itemCount
-            state.isEmpty = isEmpty
-          }
-        },
-      }
-    )
+      storage: createJSONStorage(() => sessionStorage),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          const itemCount = state.items.reduce((sum, item) => sum + item.quantity, 0)
+          const isEmpty = state.items.length === 0
+          // Update state properties directly
+          state.itemCount = itemCount
+          state.isEmpty = isEmpty
+        }
+      },
+    }
   )
 )

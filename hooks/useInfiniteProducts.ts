@@ -14,7 +14,6 @@ interface UseInfiniteProductsReturn {
   error: string | null
   hasMore: boolean
   loadMore: () => void
-  refetch: () => void
 }
 
 const PRODUCTS_PER_PAGE = 12
@@ -36,8 +35,7 @@ export function useInfiniteProducts({
     setCurrentPage,
     setHasMore,
     setLoading,
-    setError,
-    reset,
+    setError
   } = useProductsStore()
 
   const loadProducts = useCallback(async (page: number, append = false) => {
@@ -75,11 +73,6 @@ export function useInfiniteProducts({
     }
   }, [loading, hasMore, currentPage, setCurrentPage, loadProducts])
 
-  const refetch = useCallback(() => {
-    reset()
-    loadProducts(0, false)
-  }, [reset, loadProducts])
-
   // Initialize with SSR data if store is empty
   useEffect(() => {
     if (products.length === 0 && initialProducts.length > 0) {
@@ -96,6 +89,5 @@ export function useInfiniteProducts({
     error,
     hasMore,
     loadMore,
-    refetch,
   }
 }
