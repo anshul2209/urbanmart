@@ -45,10 +45,8 @@ Open [http://localhost:3000](http://localhost:3000)
 - **API Dependency**: Uses DummyJSON API - simple but external dependency
 - **No Database**: Stateless design for easier deployment
 - **Client-Side Cart**: No server-side cart persistence (simplifies architecture)
-- **Free Tier Deployment**: Render free tier has cold start limitations
 
 **Code Quality:**
-- **Biome over ESLint+Prettier**: Faster tooling with zero configuration
 - **TypeScript**: Full type safety for better maintainability
 - **Error Boundaries**: Graceful error handling without complex state management
 
@@ -60,7 +58,6 @@ Open [http://localhost:3000](http://localhost:3000)
 - **No Payment Processing**: Cart functionality only (no checkout)
 - **No Admin Panel**: No product management interface
 - **Session-Only Cart**: Cart data lost when browser tab closes
-- **Free Tier Constraints**: 50+ second cold starts on Render
 
 **Production Considerations:**
 - **Database Required**: For real e-commerce (products, users, orders)
@@ -87,7 +84,7 @@ yarn check        # Run linting and formatting
 - **Status**: ✅ Live and Functional
 - **Note**: May take 50+ seconds to wake up after inactivity
 
-## 🙏 Acknowledgments
+## 🛠️ Tools
 
 - [Next.js](https://nextjs.org/) - React framework
 - [Tailwind CSS](https://tailwindcss.com/) - CSS framework

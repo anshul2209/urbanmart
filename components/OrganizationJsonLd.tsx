@@ -1,4 +1,4 @@
-import React from 'react'
+import Script from 'next/script'
 
 export function OrganizationJsonLd() {
   const structuredData = {
@@ -38,10 +38,13 @@ export function OrganizationJsonLd() {
     },
   }
 
-  return React.createElement('script', {
-    type: 'application/ld+json',
-    dangerouslySetInnerHTML: {
-      __html: JSON.stringify(structuredData),
-    },
-  })
+  return (
+    <Script
+      id="organization-jsonld"
+      type="application/ld+json"
+      strategy="afterInteractive"
+    >
+      {JSON.stringify(structuredData)}
+    </Script>
+  )
 }

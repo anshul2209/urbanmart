@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     },
     other: {
       'product:price:amount': price,
-      'product:price:currency': 'USD',
+      'product:price:currency': 'INR',
       'product:availability': product.stock > 0 ? 'in stock' : 'out of stock',
       'product:condition': 'new',
       'product:brand': product.brand,

@@ -1,4 +1,4 @@
-import React from 'react'
+import Script from 'next/script'
 
 interface BreadcrumbItem {
   name: string
@@ -21,10 +21,13 @@ export function BreadcrumbJsonLd({ items }: BreadcrumbJsonLdProps) {
     })),
   }
 
-  return React.createElement('script', {
-    type: 'application/ld+json',
-    dangerouslySetInnerHTML: {
-      __html: JSON.stringify(structuredData),
-    },
-  })
+  return (
+    <Script
+      id="breadcrumb-jsonld"
+      type="application/ld+json"
+      strategy="afterInteractive"
+    >
+      {JSON.stringify(structuredData)}
+    </Script>
+  )
 }

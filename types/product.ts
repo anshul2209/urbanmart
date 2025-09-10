@@ -18,17 +18,4 @@ export interface Product {
     depth: number
   }
   warrantyInformation?: string
-  shippingInformation?: string
-  availabilityStatus?: string
-  reviews?: Array<{
-    rating: number
-    comment: string
-    date: string
-    reviewerName: string
-    reviewerEmail: string
-  }>
-  returnPolicy?: string
-  minimumOrderQuantity?: number
-  meta?: string
-  sku?: string
 }

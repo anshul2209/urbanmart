@@ -1,4 +1,4 @@
-import React from 'react'
+import Script from 'next/script'
 import type { Product } from '@/types/product'
 
 export function ProductJsonLd({ product }: { product: Product }) {
@@ -25,7 +25,7 @@ export function ProductJsonLd({ product }: { product: Product }) {
     offers: {
       '@type': 'Offer',
       url: `https://urbanmart.com/products/${product.id}`,
-      priceCurrency: 'USD',
+      priceCurrency: 'INR',
       price: product.price,
       priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
       availability:
@@ -40,7 +40,7 @@ export function ProductJsonLd({ product }: { product: Product }) {
         shippingRate: {
           '@type': 'MonetaryAmount',
           value: '0',
-          currency: 'USD',
+          currency: 'INR',
         },
         deliveryTime: {
           '@type': 'ShippingDeliveryTime',
@@ -68,7 +68,7 @@ export function ProductJsonLd({ product }: { product: Product }) {
       {
         '@type': 'PropertyValue',
         name: 'Weight',
-        value: `${product.weight || 'N/A'} lbs`,
+        value: `${product.weight || 'N/A'} gms`,
       },
       {
         '@type': 'PropertyValue',
@@ -85,10 +85,13 @@ export function ProductJsonLd({ product }: { product: Product }) {
     ],
   }
 
-  return React.createElement('script', {
-    type: 'application/ld+json',
-    dangerouslySetInnerHTML: {
-      __html: JSON.stringify(structuredData),
-    },
-  })
+  return (
+    <Script
+      id={`product-jsonld-${product.id}`}
+      type="application/ld+json"
+      strategy="afterInteractive"
+    >
+      {JSON.stringify(structuredData)}
+    </Script>
+  )
 }
